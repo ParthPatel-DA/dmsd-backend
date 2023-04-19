@@ -39,12 +39,12 @@ public class CustomersController {
 
     // Register a new user
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody Person person) {
+    public ResponseEntity<CommonResponse> registerUser(@RequestBody Person person) {
         String checkQuery = "SELECT * FROM person WHERE email=?";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(checkQuery, person.getEmail());
         if (!rows.isEmpty()) {
             // Email already exists, return a 409 conflict response
-            return new ResponseEntity<>("User with email already exists", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new CommonResponse(null, HttpStatus.CONFLICT.value(), "User with email already exists"), HttpStatus.CONFLICT);
         }
         String query = "INSERT INTO dmsd.PERSON\n" +
                 "(pass, firstName, address, email, telephone, person_type)\n" +
@@ -76,10 +76,19 @@ public class CustomersController {
             // Execute the second insert statement using the generated ID
             jdbcTemplate.update(query1, personId, "");
 
-            return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+            String query2 = "SELECT * FROM PERSON p natural join CUSTOMER c WHERE p.email = ? AND p.pass = ?";
+
+            Customer foundCust = jdbcTemplate.queryForObject(query2, new Object[]{person.getEmail(), person.getPass()}, new CustomerRowMapper());
+            String token = jwtUtils.generateToken(foundCust.getPerson().getEmail());
+
+            if (foundCust != null) {
+                foundCust.getPerson().setToken(token);
+                return new ResponseEntity<>(new CommonResponse(foundCust, HttpStatus.OK.value(), "Success"), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new CommonResponse(null, HttpStatus.NOT_FOUND.value(), "Invalid username or password"), HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
-            System.out.println("ERROR" + e.getMessage());
-            return new ResponseEntity<>("Failed to register user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new CommonResponse(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to login user"+e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -164,19 +173,19 @@ public class CustomersController {
 //    }
 //
     // UserMapper class to map query results to User object
-    private static class PersonMapper implements RowMapper<Person> {
-
-        @Override
-        public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Person person = new Person();
-            person.setId(rs.getLong("person_id"));
-            person.setFirstName(rs.getString("firstName"));
-            person.setAddress(rs.getString("address"));
-            person.setEmail(rs.getString("email"));
-            person.setPersonType(rs.getString("person_type"));
-            person.setTelephone(rs.getString("telephone"));
-            return person;
-        }
-    }
+//    private static class PersonMapper implements RowMapper<Person> {
+//
+//        @Override
+//        public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
+//            Person person = new Person();
+//            person.setId(rs.getLong("person_id"));
+//            person.setFirstName(rs.getString("firstName"));
+//            person.setAddress(rs.getString("address"));
+//            person.setEmail(rs.getString("email"));
+//            person.setPersonType(rs.getString("person_type"));
+//            person.setTelephone(rs.getString("telephone"));
+//            return person;
+//        }
+//    }
 
 }

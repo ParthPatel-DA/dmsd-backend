@@ -1,26 +1,41 @@
 package com.example.dmsd.model;
 
 public class Employee {
+    private Person person;
     private String ssn;
-    private Long personId;
-    private int salary;
-    private String locationId;
-    private String jobType;
-    private int commissionPercentage;
+    private Long person_id;
+    private Long salary;
+    private Long location_id;
+    private JobType job_type;
+    private Double commision_percentage;
     private String expertise;
 
-    // Constructor
-    public Employee(String ssn, Long personId, int salary, String locationId, String jobType, int commissionPercentage, String expertise) {
+    public Employee() {
+    }
+
+    public Employee(Person person) {
+        this.person = person;
+    }
+
+    public Employee(Person person, String ssn, Long person_id, Long salary, Long location_id, JobType job_type, Double commision_percentage, String expertise) {
+        this.person = person;
         this.ssn = ssn;
-        this.personId = personId;
+        this.person_id = person_id;
         this.salary = salary;
-        this.locationId = locationId;
-        this.jobType = jobType;
-        this.commissionPercentage = commissionPercentage;
+        this.location_id = location_id;
+        this.job_type = job_type;
+        this.commision_percentage = commision_percentage;
         this.expertise = expertise;
     }
 
-    // Getters and Setters
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
     public String getSsn() {
         return ssn;
     }
@@ -29,44 +44,44 @@ public class Employee {
         this.ssn = ssn;
     }
 
-    public Long getPersonId() {
-        return personId;
+    public Long getPerson_id() {
+        return person_id;
     }
 
-    public void setPersonId(Long personId) {
-        this.personId = personId;
+    public void setPerson_id(Long person_id) {
+        this.person_id = person_id;
     }
 
-    public int getSalary() {
+    public Long getSalary() {
         return salary;
     }
 
-    public void setSalary(int salary) {
+    public void setSalary(Long salary) {
         this.salary = salary;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public Long getLocation_id() {
+        return location_id;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setLocation_id(Long location_id) {
+        this.location_id = location_id;
     }
 
-    public String getJobType() {
-        return jobType;
+    public JobType getJob_type() {
+        return job_type;
     }
 
-    public void setJobType(String jobType) {
-        this.jobType = jobType;
+    public void setJob_type(String job_type) {
+        this.job_type = JobType.valueOf(job_type);
     }
 
-    public int getCommissionPercentage() {
-        return commissionPercentage;
+    public Double getCommisionPercentage() {
+        return commision_percentage;
     }
 
-    public void setCommissionPercentage(int commissionPercentage) {
-        this.commissionPercentage = commissionPercentage;
+    public void setCommisionPercentage(Double commision_percentage) {
+        this.commision_percentage = commision_percentage;
     }
 
     public String getExpertise() {
@@ -75,5 +90,10 @@ public class Employee {
 
     public void setExpertise(String expertise) {
         this.expertise = expertise;
+    }
+
+    public enum JobType {
+        TECHNICIAN,
+        MANAGER,
     }
 }
