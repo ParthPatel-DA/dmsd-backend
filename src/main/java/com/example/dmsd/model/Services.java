@@ -1,60 +1,73 @@
 package com.example.dmsd.model;
 
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Services {
-    private Long service_id;
-    private Long skillid;
-    private String sname;
-    private Double labor_price;
-    private Double addcharge;
 
-    public Services() {
+    private int serviceId;
+    private int skillId;
+    private String serviceName;
+    private int laborPrice;
+    private int addCharge;
+
+    public Services() {}
+
+    public Services(int serviceId, int skillId, String serviceName, int laborPrice, int addCharge) {
+        this.serviceId = serviceId;
+        this.skillId = skillId;
+        this.serviceName = serviceName;
+        this.laborPrice = laborPrice;
+        this.addCharge = addCharge;
     }
 
-    public Services(Long service_id, Long skillid, String sname, Double labor_price, Double addcharge) {
-        this.service_id = service_id;
-        this.skillid = skillid;
-        this.sname = sname;
-        this.labor_price = labor_price;
-        this.addcharge = addcharge;
+    public Services(ResultSet rs) throws SQLException {
+        this.serviceId = rs.getInt("service_id");
+        this.skillId = rs.getInt("skillid");
+        this.serviceName = rs.getString("sname");
+        this.laborPrice = rs.getInt("labor_price");
+        this.addCharge = rs.getInt("addcharge");
     }
 
-    public Long getService_id() {
-        return service_id;
+    // Getters and Setters
+    public int getServiceId() {
+        return serviceId;
     }
 
-    public void setService_id(Long service_id) {
-        this.service_id = service_id;
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 
-    public Long getSkillid() {
-        return skillid;
+    public int getSkillId() {
+        return skillId;
     }
 
-    public void setSkillid(Long skillid) {
-        this.skillid = skillid;
+    public void setSkillId(int skillId) {
+        this.skillId = skillId;
     }
 
-    public String getSname() {
-        return sname;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setSname(String sname) {
-        this.sname = sname;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
-    public Double getLabor_price() {
-        return labor_price;
+    public int getLaborPrice() {
+        return laborPrice;
     }
 
-    public void setLabor_price(Double labor_price) {
-        this.labor_price = labor_price;
+    public void setLaborPrice(int laborPrice) {
+        this.laborPrice = laborPrice;
     }
 
-    public Double getAddcharge() {
-        return addcharge;
+    public int getAddCharge() {
+        return addCharge;
     }
 
-    public void setAddcharge(Double addcharge) {
-        this.addcharge = addcharge;
+    public void setAddCharge(int addCharge) {
+        this.addCharge = addCharge;
     }
 }
