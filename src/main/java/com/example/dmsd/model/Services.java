@@ -3,6 +3,7 @@ package com.example.dmsd.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class Services {
 
@@ -12,14 +13,25 @@ public class Services {
     private int laborPrice;
     private int addCharge;
 
+    private List<Integer> partIds;
+
     public Services() {}
 
-    public Services(int serviceId, int skillId, String serviceName, int laborPrice, int addCharge) {
+    public Services(int serviceId, int skillId, String serviceName, int laborPrice, int addCharge, List<Integer> partIds) {
         this.serviceId = serviceId;
         this.skillId = skillId;
         this.serviceName = serviceName;
         this.laborPrice = laborPrice;
         this.addCharge = addCharge;
+        this.partIds = partIds;
+    }
+
+    public List<Integer> getPartIds() {
+        return partIds;
+    }
+
+    public void setPartIds(List<Integer> partIds) {
+        this.partIds = partIds;
     }
 
     public Services(ResultSet rs) throws SQLException {

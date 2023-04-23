@@ -11,6 +11,8 @@ public class Appointment {
     private LocalDate appointmentDate;
     private String status;
 
+    private int serviceId;
+
     public Appointment() {}
 
     public Appointment(int appointmentId, int customerId, int vehicleId, int locationId, String technicianSsn, LocalDate appointmentDate, String status) {
@@ -24,6 +26,14 @@ public class Appointment {
     }
 
     // getters and setters
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
+    }
 
     public int getAppointmentId() {
         return appointmentId;

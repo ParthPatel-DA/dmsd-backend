@@ -18,6 +18,7 @@ public class AppointmentsRowMapper implements RowMapper<Appointment> {
         appointment.setTechnicianSsn(rs.getString("techssn"));
         appointment.setAppointmentDate(rs.getDate("appointment_date").toLocalDate());
         appointment.setStatus(rs.getString("status"));
+        appointment.setServiceId(rs.getInt("service_id"));
         return appointment;
     }
 

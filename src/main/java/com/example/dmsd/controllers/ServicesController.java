@@ -28,6 +28,14 @@ public class ServicesController {
         try {
             String sql = "INSERT INTO SERVICES (skillid, sname, labor_price, addcharge) VALUES (?, ?, ?, ?)";
             int rows = jdbcTemplate.update(sql, service.getSkillId(), service.getServiceName(), service.getLaborPrice(), service.getAddCharge());
+
+            int serviceID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+
+            for(Integer partId : service.getPartIds()) {
+                String query = "INSERT INTO SERVICES_PARTS (service_id, part_id ) VALUES (?, ?)";
+                jdbcTemplate.update(query, serviceID, partId);
+            }
+
             if (rows == 1) {
                 return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Service created successfully"), HttpStatus.OK);
             } else {
