@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/appointments")
+@RequestMapping("/api/appointments")
 public class AppointmentController {
 
     private final JdbcTemplate jdbcTemplate;
@@ -98,9 +98,6 @@ public class AppointmentController {
         }
     }
 
-
-
-
     // Update an existing appointment
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse> updateAppointment(@PathVariable("id") int id, @RequestBody Appointment appointment) {
@@ -111,6 +108,24 @@ public class AppointmentController {
                 return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Appointment Updated successfully"), HttpStatus.OK);
 
 
+            } else {
+                throw new SQLException("Failed to update appointment");
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(new CommonResponse(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error Updating Appointment."+e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+    }
+
+
+    // Update an existing appointment
+    @PutMapping("/status/{id}")
+    public ResponseEntity<CommonResponse> updateStatusAppointment(@PathVariable("id") int id, @RequestBody Appointment appointment) {
+        try {
+            String sql =  "UPDATE appointments SET status = ? WHERE appointment_id = ?";
+            int rows = jdbcTemplate.update(sql, appointment.getStatus(), id);
+            if (rows == 1) {
+                return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Appointment Updated successfully"), HttpStatus.OK);
             } else {
                 throw new SQLException("Failed to update appointment");
             }
@@ -160,7 +175,7 @@ public class AppointmentController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllAppointments() {
         try {
-            String sql = "SELECT * FROM APPOINTMENTS";
+            String sql = "SELECT * FROM APPOINTMENTS natural join APPOINTMENTS_SERVICES_INVOICES natural join INVOICES";
             List<Appointment> appointments = jdbcTemplate.query(sql, new AppointmentsRowMapper());
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched."), HttpStatus.OK);
 
@@ -174,7 +189,7 @@ public class AppointmentController {
     @GetMapping("/loc/{locationId}")
     public ResponseEntity<CommonResponse> getAppointmentsByLocationId(@PathVariable("locationId") int locationId) {
         try {
-            String sql = "SELECT * FROM appointments WHERE locid = ?";
+            String sql = "SELECT * FROM APPOINTMENTS natural join APPOINTMENTS_SERVICES_INVOICES natural join INVOICES WHERE locid = ?";
             List<Appointment> appointments = jdbcTemplate.query(sql, new Object[]{locationId}, new AppointmentsRowMapper());
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched by location ID."), HttpStatus.OK);
 
@@ -188,7 +203,7 @@ public class AppointmentController {
     @GetMapping("/cust/{customerId}")
     public ResponseEntity<CommonResponse> getAppointmentsByCustomerId(@PathVariable("customerId") int customerId) {
         try {
-            String sql = "SELECT * FROM appointments WHERE custid = ?";
+            String sql = "SELECT * FROM APPOINTMENTS natural join APPOINTMENTS_SERVICES_INVOICES natural join INVOICES WHERE custid = ?";
             List<Appointment> appointments = jdbcTemplate.query(sql, new Object[]{customerId}, new AppointmentsRowMapper());
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched by Customer ID."), HttpStatus.OK);
 

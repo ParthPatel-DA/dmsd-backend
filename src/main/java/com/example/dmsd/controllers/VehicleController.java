@@ -92,6 +92,19 @@ public class VehicleController {
         }
     }
 
+    // Get a vehicle by user id
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CommonResponse> getVehicleByUserId(@PathVariable("userId") int userId) {
+        try {
+            String sql = "SELECT * FROM VEHICLE WHERE cid=?";
+//            List<Vehicle> vehicles = jdbcTemplate.queryForObject(sql, new Object[]{userId}, new VehicleRowMapper());
+            List<Vehicle> vehicles = jdbcTemplate.query(sql, new VehicleRowMapper(), new Object[]{userId});
+            return new ResponseEntity<>(new CommonResponse(vehicles, HttpStatus.OK.value(), "Vehicle fetched."), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new CommonResponse(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching data."+e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     // Get all vehicles
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllVehicles() {
@@ -104,5 +117,5 @@ public class VehicleController {
             return new ResponseEntity<>(new CommonResponse(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching data."+e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-}
+    }
 }

@@ -10,7 +10,7 @@ public class Appointment {
     private String technicianSsn;
     private LocalDate appointmentDate;
     private String status;
-
+    private Double total_charge;
     private int serviceId;
 
     public Appointment() {}
@@ -89,5 +89,13 @@ public class Appointment {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Double getTotal_charge() {
+        return total_charge;
+    }
+
+    public void setTotal_charge(Double total_charge) {
+        this.total_charge = total_charge;
     }
 }

@@ -27,4 +27,8 @@ public class Customer {
         this.creditCard = creditCard;
     }
 
+    public Customer(Person person) {
+        this.person = person;
+    }
+
 }

@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/services/")
+@RequestMapping("api/services")
 public class ServicesController {
 
     @Autowired

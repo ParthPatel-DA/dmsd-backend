@@ -91,5 +91,6 @@ public class Person {
     public enum PersonType {
         EMPLOYEE,
         CUSTOMER,
+        ADMIN,
     }
 }
