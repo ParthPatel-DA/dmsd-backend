@@ -21,6 +21,7 @@ public class AppointmentsRowMapper implements RowMapper<Appointment> {
         appointment.setTotal_charge(rs.getDouble("total_charge"));
         appointment.setLocationName(rs.getString("lname"));
         appointment.setVehicleType(rs.getString("vtype"));
+        appointment.setCustomerName(rs.getString("cname"));
 //        appointment.setServiceId(rs.getInt("service_id"));
         return appointment;
     }
