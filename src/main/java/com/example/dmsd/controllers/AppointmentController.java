@@ -172,7 +172,14 @@ public class AppointmentController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllAppointments() {
         try {
-            String sql = "SELECT a.*, l.lname, v.vtype FROM APPOINTMENTS a JOIN LOCATIONS l ON a.locid = l.location_id JOIN VEHICLE v ON a.vechid = v.vehicle_id";
+            String sql = "SELECT a.*, l.lname, v.vtype, p.firstname AS cname, i.total_charge \n" +
+                    "FROM APPOINTMENTS a " +
+                    "JOIN LOCATIONS l ON a.locid = l.location_id " +
+                    "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
+                    "JOIN CUSTOMER c ON a.custid = c.customer_id " +
+                    "JOIN PERSON p ON c.person_id = p.person_id " +
+                    "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
+                    "JOIN INVOICES i ON asi.invoice_id = i.invoice_id ;";
             List<Appointment> appointments = jdbcTemplate.query(sql, new AppointmentsRowMapper());
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched."), HttpStatus.OK);
 
