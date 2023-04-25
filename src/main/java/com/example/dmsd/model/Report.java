@@ -1,19 +1,37 @@
 package com.example.dmsd.model;
 
-import java.math.BigDecimal;
+import org.springframework.jdbc.core.RowCallbackHandler;
 
-public class Report {
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Report implements RowCallbackHandler {
 
     private String locationName;
     private String serviceName;
-    private BigDecimal revenue;
 
-    private String lname;
+    private String revenue;
 
-
-    public Report(String locationName, String serviceName, BigDecimal revenue) {
+    public Report() {
         this.locationName = locationName;
         this.serviceName = serviceName;
+        this.revenue = revenue;
+    }
+
+
+
+// constructor, getters, and setters
+
+
+
+    public Report(String locationName, String serviceName, String revenue) {
+        this.locationName = locationName;
+        this.serviceName = serviceName;
+        this.revenue = revenue;
+    }
+
+    public void setRevenue(String revenue) {
         this.revenue = revenue;
     }
 
@@ -33,11 +51,12 @@ public class Report {
         this.serviceName = serviceName;
     }
 
-    public BigDecimal getRevenue() {
+    public String getRevenue() {
         return revenue;
     }
 
-    public void setRevenue(BigDecimal revenue) {
-        this.revenue = revenue;
+    @Override
+    public void processRow(ResultSet rs) throws SQLException {
+
     }
 }
