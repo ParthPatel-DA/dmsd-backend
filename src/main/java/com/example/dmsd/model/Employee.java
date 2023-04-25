@@ -10,6 +10,8 @@ public class Employee {
     private Double commision_percentage;
     private String expertise;
 
+    private String locationName;
+
     public Employee() {
     }
 
@@ -17,7 +19,8 @@ public class Employee {
         this.person = person;
     }
 
-    public Employee(Person person, String ssn, Long person_id, Long salary, Long location_id, JobType job_type, Double commision_percentage, String expertise) {
+
+    public Employee(Person person, String ssn, Long person_id, Long salary, Long location_id, JobType job_type, Double commision_percentage, String expertise, String locationName) {
         this.person = person;
         this.ssn = ssn;
         this.person_id = person_id;
@@ -26,6 +29,27 @@ public class Employee {
         this.job_type = job_type;
         this.commision_percentage = commision_percentage;
         this.expertise = expertise;
+        this.locationName = locationName;
+    }
+
+    public void setJob_type(JobType job_type) {
+        this.job_type = job_type;
+    }
+
+    public Double getCommision_percentage() {
+        return commision_percentage;
+    }
+
+    public void setCommision_percentage(Double commision_percentage) {
+        this.commision_percentage = commision_percentage;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     public Person getPerson() {

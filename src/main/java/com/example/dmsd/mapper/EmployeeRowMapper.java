@@ -25,6 +25,7 @@ public class EmployeeRowMapper implements RowMapper<Employee> {
         employee.setJob_type(rs.getString("job_type"));
         employee.setCommisionPercentage(rs.getDouble("commision_percentage"));
         employee.setExpertise(rs.getString("expertise"));
+        employee.setLocationName(rs.getString("lname"));
 
         return employee;
     }
