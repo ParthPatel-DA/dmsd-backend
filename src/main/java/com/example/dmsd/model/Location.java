@@ -7,6 +7,8 @@ public class Location {
     private String locationName;
     private String address;
 
+    private String managerName;
+
     // Constructor
     public Location(int locationId, String managerSsn, String employeeSsn, String locationName, String address) {
         this.locationId = locationId;
@@ -21,6 +23,14 @@ public class Location {
     }
 
     // Getters and Setters
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
     public int getLocationId() {
         return locationId;
     }

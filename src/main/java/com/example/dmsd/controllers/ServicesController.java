@@ -99,7 +99,7 @@ public class ServicesController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllServices() {
         try {
-            String sql = "SELECT * FROM SERVICES";
+            String sql = "SELECT s.*, GROUP_CONCAT(p.pname SEPARATOR ', ') AS parts_name FROM SERVICES s LEFT JOIN SERVICES_PARTS sp ON s.service_id = sp.service_id LEFT JOIN PARTS p ON sp.part_id = p.part_id GROUP BY s.service_id";
             List<Services> services = jdbcTemplate.query(sql, new ServicesRowMapper());
             return new ResponseEntity<>(new CommonResponse(services, HttpStatus.OK.value(), "Fetched all Services."), HttpStatus.OK);
 

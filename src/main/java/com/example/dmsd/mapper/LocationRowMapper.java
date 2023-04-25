@@ -16,6 +16,7 @@ public class LocationRowMapper implements RowMapper<Location> {
         location.setEmployeeSsn(rs.getString("essn"));
         location.setLocationName(rs.getString("lname"));
         location.setAddress(rs.getString("address"));
+        location.setManagerName(rs.getString("manager_name"));
         return location;
     }
 

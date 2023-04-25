@@ -12,18 +12,28 @@ public class Services {
     private String serviceName;
     private int laborPrice;
     private int addCharge;
+    private String partsName;
 
     private List<Integer> partIds;
 
     public Services() {}
 
-    public Services(int serviceId, int skillId, String serviceName, int laborPrice, int addCharge, List<Integer> partIds) {
+    public Services(int serviceId, int skillId, String serviceName, int laborPrice, int addCharge, String partsName, List<Integer> partIds) {
         this.serviceId = serviceId;
         this.skillId = skillId;
         this.serviceName = serviceName;
         this.laborPrice = laborPrice;
         this.addCharge = addCharge;
+        this.partsName = partsName;
         this.partIds = partIds;
+    }
+
+    public String getPartsName() {
+        return partsName;
+    }
+
+    public void setPartsName(String partsName) {
+        this.partsName = partsName;
     }
 
     public List<Integer> getPartIds() {

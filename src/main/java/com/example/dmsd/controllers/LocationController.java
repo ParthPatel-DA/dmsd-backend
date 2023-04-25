@@ -23,7 +23,7 @@ public class LocationController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllLocations() {
         try {
-            List<Location> locations = jdbcTemplate.query("SELECT * FROM LOCATIONS", new LocationRowMapper());
+            List<Location> locations = jdbcTemplate.query("SELECT l.*, p.firstName AS manager_name FROM LOCATIONS l JOIN ( EMPLOYEE e NATURAL JOIN PERSON p ) ON l.mssn = e.ssn;", new LocationRowMapper());
             return new ResponseEntity<>(new CommonResponse(locations, HttpStatus.OK.value(), "All Locations Fetched Succesfully."), HttpStatus.OK);
 
         } catch (Exception e) {
