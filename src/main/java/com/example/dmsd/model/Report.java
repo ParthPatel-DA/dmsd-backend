@@ -8,6 +8,9 @@ public class Report {
     private String serviceName;
     private BigDecimal revenue;
 
+    private String lname;
+
+
     public Report(String locationName, String serviceName, BigDecimal revenue) {
         this.locationName = locationName;
         this.serviceName = serviceName;

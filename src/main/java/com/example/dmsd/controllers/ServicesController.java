@@ -99,14 +99,7 @@ public class ServicesController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllServices() {
         try {
-            String sql = "SELECT l.lname, SUM(ai.price) AS revenue \n" +
-                    "FROM APPOINTMENTS a \n" +
-                    "JOIN LOCATIONS l ON a.locid = l.location_id \n" +
-                    "JOIN APPOINTMENTS_SERVICES_INVOICES ai ON a.appointment_id = ai.appointment_id \n" +
-                    "JOIN SERVICES s ON ai.service_id = s.service_id \n" +
-                    "JOIN INVOICES i ON ai.invoice_id = i.invoice_id \n" +
-                    "GROUP BY l.lname\n" +
-                    "ORDER BY revenue DESC limit 3;";
+            String sql = "SELECT s.*, GROUP_CONCAT(p.pname SEPARATOR ', ') AS parts_name FROM SERVICES s LEFT JOIN SERVICES_PARTS sp ON s.service_id = sp.service_id LEFT JOIN PARTS p ON sp.part_id = p.part_id GROUP BY s.service_id";
             List<Services> services = jdbcTemplate.query(sql, new ServicesRowMapper());
             return new ResponseEntity<>(new CommonResponse(services, HttpStatus.OK.value(), "Fetched all Services."), HttpStatus.OK);
 
