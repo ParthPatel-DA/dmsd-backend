@@ -17,8 +17,8 @@ public class Report3RowMapper implements RowMapper<Report3> {
     @Override
     public Report3 mapRow(ResultSet rs, int rowNum) throws SQLException {
         Report3 location2 = new Report3();
-        location2.getLocationName(rs.getString("lname"));
-        location2.getRevenue(rs.getInt("revenue"));
+        location2.setLocationName(rs.getString("lname"));
+        location2.setRevenue(rs.getDouble("revenue"));
 
         return location2;
     }

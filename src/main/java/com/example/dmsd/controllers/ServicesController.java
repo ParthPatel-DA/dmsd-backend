@@ -26,8 +26,8 @@ public class ServicesController {
     @PostMapping("")
     public ResponseEntity<CommonResponse> createService(@RequestBody Services service) {
         try {
-            String sql = "INSERT INTO SERVICES (skillid, sname, labor_price, addcharge) VALUES (?, ?, ?, ?)";
-            int rows = jdbcTemplate.update(sql, service.getSkillId(), service.getServiceName(), service.getLaborPrice(), service.getAddCharge());
+            String sql = "INSERT INTO SERVICES (sname, labor_price, addcharge) VALUES (?, ?, ?)";
+            int rows = jdbcTemplate.update(sql, service.getServiceName(), service.getLaborPrice(), service.getAddCharge());
 
             int serviceID = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
 

@@ -69,7 +69,14 @@ public class AppointmentController {
             int totalCharge = laborPrice + addCharge;
 
 
-            String query = "SELECT SUM(retail_price) as total_retail_price FROM Parts WHERE servid = ?";
+            String query = "\n" +
+                    "SELECT SUM(retail_price) AS total_retail_price " +
+                    "FROM PARTS " +
+                    "WHERE part_id IN (" +
+                    "  SELECT part_id" +
+                    "  FROM SERVICES_PARTS" +
+                    "  WHERE service_id = ?" +
+                    ")";
             Map<String, Object> service2 = jdbcTemplate.queryForMap(query, appointment.getServiceId());
 
             BigDecimal totalRetailPrice = (BigDecimal) service2.get("total_retail_price");
@@ -176,7 +183,7 @@ public class AppointmentController {
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
-                    "JOIN CUSTOMER c ON a.custid = c.customer_id " +
+                    "JOIN CUSTOMER c ON a.custid = c.person_id " +
                     "JOIN PERSON p ON c.person_id = p.person_id " +
                     "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
                     "JOIN INVOICES i ON asi.invoice_id = i.invoice_id ;";
@@ -197,7 +204,7 @@ public class AppointmentController {
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
-                    "JOIN CUSTOMER c ON a.custid = c.customer_id " +
+                    "JOIN CUSTOMER c ON a.custid = c.person_id " +
                     "JOIN PERSON p ON c.person_id = p.person_id " +
                     "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
                     "JOIN INVOICES i ON asi.invoice_id = i.invoice_id  WHERE a.locid=?;";;
@@ -216,11 +223,11 @@ public class AppointmentController {
     @GetMapping("/cust/{customerId}")
     public ResponseEntity<CommonResponse> getAppointmentsByCustomerId(@PathVariable("customerId") int customerId) {
         try {
-            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge \n" +
+            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype,' ',v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge \n" +
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
-                    "JOIN CUSTOMER c ON a.custid = c.customer_id " +
+                    "JOIN CUSTOMER c ON a.custid = c.person_id " +
                     "JOIN PERSON p ON c.person_id = p.person_id " +
                     "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
                     "JOIN INVOICES i ON asi.invoice_id = i.invoice_id  WHERE a.custid=?;";
@@ -247,7 +254,7 @@ public class AppointmentController {
                 jdbcTemplate.update(updateCustomerQuery, appointment.getCreditCard(), appointmentId);
             }
 
-              String updateStatusQuery = "UPDATE Appointments SET status = 'Done' WHERE appointment_id = ?";
+              String updateStatusQuery = "UPDATE Appointments SET status = 'DONE' WHERE appointment_id = ?";
               jdbcTemplate.update(updateStatusQuery, appointmentId);
 
             return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Payment Method and Credit card updated."), HttpStatus.OK);

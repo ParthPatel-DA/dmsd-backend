@@ -23,7 +23,7 @@ public class LocationController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllLocations() {
         try {
-            List<Location> locations = jdbcTemplate.query("SELECT l.*, p.firstName AS manager_name FROM LOCATIONS l JOIN ( EMPLOYEE e NATURAL JOIN PERSON p ) ON l.mssn = e.ssn;", new LocationRowMapper());
+            List<Location> locations = jdbcTemplate.query("SELECT l.*, p.firstName AS manager_name FROM LOCATIONS l LEFT JOIN ( EMPLOYEE e NATURAL JOIN PERSON p ) ON l.mssn = e.ssn;", new LocationRowMapper());
             return new ResponseEntity<>(new CommonResponse(locations, HttpStatus.OK.value(), "All Locations Fetched Succesfully."), HttpStatus.OK);
 
         } catch (Exception e) {
@@ -51,10 +51,10 @@ public class LocationController {
     @PostMapping("")
     public ResponseEntity<CommonResponse> createLocation(@RequestBody Location location) {
         try {
-            int rows = jdbcTemplate.update("INSERT INTO LOCATIONS (mssn, location_id, essn, lname, address) VALUES (?, ?, ?, ?, ?)",
-                    location.getManagerSsn(), location.getLocationId(), location.getEmployeeSsn(), location.getLocationName(), location.getAddress());
+            int rows = jdbcTemplate.update("INSERT INTO LOCATIONS (mssn, lname, address) VALUES (?, ?, ?)",
+                    location.getManagerSsn(), location.getLocationName(), location.getAddress());
             if (rows == 1) {
-                return new ResponseEntity<>(new CommonResponse(null, HttpStatus.CREATED.value(), "Location created successfully"), HttpStatus.CREATED);
+                return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Location created successfully"), HttpStatus.OK);
 
             } else {
                 return new ResponseEntity<>(new CommonResponse(null, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to insert "), HttpStatus.INTERNAL_SERVER_ERROR);

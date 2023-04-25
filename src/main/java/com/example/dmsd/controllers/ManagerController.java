@@ -29,8 +29,8 @@ public class ManagerController {
     public ResponseEntity<CommonResponse> createTechnician(@RequestBody Employee employee) {
         try {
             // Insert the employee record into the EMPLOYEE and PERSON tables
-            jdbcTemplate.update("INSERT INTO PERSON (firstName, address, email, person_type, telephone) VALUES (?, ?, ?, ?, ?)",
-                    employee.getPerson().getFirstName(), employee.getPerson().getAddress(),
+            jdbcTemplate.update("INSERT INTO PERSON (firstName, pass, address, email, person_type, telephone) VALUES (?, ?, ?, ?, ?, ?)",
+                    employee.getPerson().getFirstName(), employee.getPerson().getPass(), employee.getPerson().getAddress(),
                     employee.getPerson().getEmail(), Person.PersonType.EMPLOYEE.name(), employee.getPerson().getTelephone());
 
             int personId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
@@ -38,6 +38,9 @@ public class ManagerController {
             jdbcTemplate.update("INSERT INTO EMPLOYEE (ssn, person_id, salary, location_id, job_type, commision_percentage, expertise) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     employee.getSsn(), personId, employee.getSalary(), employee.getLocation_id(), Employee.JobType.MANAGER.name(),
                     employee.getCommisionPercentage(), employee.getExpertise());
+
+            jdbcTemplate.update("UPDATE dmsd.LOCATIONS SET mssn = ? WHERE location_id=?",
+                    employee.getSsn(), employee.getLocation_id());
 
             return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Employee record created successfully"), HttpStatus.OK);
         } catch (Exception e) {
@@ -102,8 +105,8 @@ public class ManagerController {
         try {
             String query = "SELECT p.*,e.*,l.lname " +
                     "FROM (person p NATURAL JOIN employee e)  " +
-                    "JOIN locations l on e.location_id = l.location_id " +
-                    "WHERE p.person_type = 'EMPLOYEE' AND e.job_type = 'TECHNICIAN';";;
+                    "LEFT JOIN locations l on e.location_id = l.location_id " +
+                    "WHERE p.person_type = 'EMPLOYEE' AND e.job_type = 'MANAGER';";;
             List<Employee> technicians = jdbcTemplate.query(query, new EmployeeRowMapper());
             return new ResponseEntity<>(new CommonResponse(technicians, HttpStatus.OK.value(), "Success"), HttpStatus.OK);
         } catch (Exception e) {

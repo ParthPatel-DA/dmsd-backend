@@ -5,6 +5,7 @@ import com.example.dmsd.model.Person;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class EmployeeRowMapper implements RowMapper<Employee> {
@@ -25,7 +26,16 @@ public class EmployeeRowMapper implements RowMapper<Employee> {
         employee.setJob_type(rs.getString("job_type"));
         employee.setCommisionPercentage(rs.getDouble("commision_percentage"));
         employee.setExpertise(rs.getString("expertise"));
-        employee.setLocationName(rs.getString("lname"));
+//        employee.setLocationName(rs.getString("lname"));
+
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        for (int i = 1; i <= columnCount; i++) {
+            if (metaData.getColumnName(i).equals("lname")) {
+                employee.setLocationName(rs.getString("lname"));
+                break;
+            }
+        }
 
         return employee;
     }
