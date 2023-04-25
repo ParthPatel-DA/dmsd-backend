@@ -20,10 +20,12 @@ public class Appointment {
     private String locationName;
     private String vehicleType;
 
+    private String CustomerName;
+
 
     public Appointment() {}
 
-    public Appointment(int appointmentId, int customerId, int vehicleId, int locationId, String technicianSsn, LocalDate appointmentDate, String status, Double total_charge, int serviceId, String creditCard, String paymentMethod, String locationName, String vehicleType) {
+    public Appointment(int appointmentId, int customerId, int vehicleId, int locationId, String technicianSsn, LocalDate appointmentDate, String status, Double total_charge, int serviceId, String creditCard, String paymentMethod, String locationName, String vehicleType, String customerName) {
         this.appointmentId = appointmentId;
         this.customerId = customerId;
         this.vehicleId = vehicleId;
@@ -37,10 +39,19 @@ public class Appointment {
         this.paymentMethod = paymentMethod;
         this.locationName = locationName;
         this.vehicleType = vehicleType;
+        this.CustomerName = customerName;
     }
 
     // getters and setters
 
+
+    public String getCustomerName() {
+        return CustomerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        CustomerName = customerName;
+    }
 
     public String getLocationName() {
         return locationName;
