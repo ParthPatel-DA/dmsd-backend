@@ -101,7 +101,10 @@ public class TechnicianController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllTechnicians() {
         try {
-            String query = "SELECT * FROM person p NATURAL JOIN employee e WHERE p.person_type='EMPLOYEE' and e.job_type='TECHNICIAN'";
+            String query = "SELECT p.*,e.*,l.lname " +
+                    "FROM (person p NATURAL JOIN employee e)  " +
+                    "JOIN locations l on e.location_id = l.location_id " +
+                    "WHERE p.person_type = 'EMPLOYEE' AND e.job_type = 'TECHNICIAN';";
             List<Employee> technicians = jdbcTemplate.query(query, new EmployeeRowMapper());
             return new ResponseEntity<>(new CommonResponse(technicians, HttpStatus.OK.value(), "Success"), HttpStatus.OK);
         } catch (Exception e) {
