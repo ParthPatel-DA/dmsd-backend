@@ -179,14 +179,14 @@ public class AppointmentController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllAppointments() {
         try {
-            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge \n" +
+            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method \n" +
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
                     "JOIN CUSTOMER c ON a.custid = c.person_id " +
                     "JOIN PERSON p ON c.person_id = p.person_id " +
                     "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
-                    "JOIN INVOICES i ON asi.invoice_id = i.invoice_id ;";
+                    "JOIN INVOICES i ON asi.invoice_id = i.invoice_id JOIN SERVICES s ON asi.service_id = s.service_id ;";
             List<Appointment> appointments = jdbcTemplate.query(sql, new AppointmentsRowMapper());
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched."), HttpStatus.OK);
 
@@ -200,14 +200,14 @@ public class AppointmentController {
     @GetMapping("/loc/{locationId}")
     public ResponseEntity<CommonResponse> getAppointmentsByLocationId(@PathVariable("locationId") int locationId) {
         try {
-            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge \n" +
+            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method \n" +
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
                     "JOIN CUSTOMER c ON a.custid = c.person_id " +
                     "JOIN PERSON p ON c.person_id = p.person_id " +
                     "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
-                    "JOIN INVOICES i ON asi.invoice_id = i.invoice_id  WHERE a.locid=?;";;
+                    "JOIN INVOICES i ON asi.invoice_id = i.invoice_id JOIN SERVICES s ON asi.service_id = s.service_id  WHERE a.locid=?;";;
            // String sql = "SELECT a.*, v.vtype, l.lname FROM APPOINTMENTS a JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id JOIN INVOICES i ON asi.invoice_id = i.invoice_id JOIN VEHICLE v ON a.vechid = v.vehicle_id JOIN LOCATIONS l ON a.locid = l.location_id WHERE a.locid = ?";
 
             List<Appointment> appointments = jdbcTemplate.query(sql, new Object[]{locationId}, new AppointmentsRowMapper());
@@ -223,14 +223,14 @@ public class AppointmentController {
     @GetMapping("/cust/{customerId}")
     public ResponseEntity<CommonResponse> getAppointmentsByCustomerId(@PathVariable("customerId") int customerId) {
         try {
-            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype,' ',v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge \n" +
+            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype,' ',v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method \n" +
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
                     "JOIN CUSTOMER c ON a.custid = c.person_id " +
                     "JOIN PERSON p ON c.person_id = p.person_id " +
                     "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
-                    "JOIN INVOICES i ON asi.invoice_id = i.invoice_id  WHERE a.custid=?;";
+                    "JOIN INVOICES i ON asi.invoice_id = i.invoice_id JOIN SERVICES s ON asi.service_id = s.service_id WHERE a.custid=?;";
           //  String sql = "SELECT * FROM APPOINTMENTS natural join APPOINTMENTS_SERVICES_INVOICES natural join INVOICES WHERE custid = ?";
             List<Appointment> appointments = jdbcTemplate.query(sql, new Object[]{customerId}, new AppointmentsRowMapper());
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched by Customer ID."), HttpStatus.OK);

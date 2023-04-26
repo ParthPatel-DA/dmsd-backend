@@ -67,7 +67,7 @@ public class ServicesController {
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse> updateService(@PathVariable("id") int id, @RequestBody Services service) {
         try {
-            String sql = "UPDATE SERVICES SET skillid = ?, sname = ?, labor_price = ?, addcharge = ? WHERE service_id = ?";
+            String sql = "UPDATE SERVICES SET sname = ?, labor_price = ?, addcharge = ? WHERE service_id = ?";
             int rows = jdbcTemplate.update(sql, service.getSkillId(), service.getServiceName(), service.getLaborPrice(), service.getAddCharge(), id);
             if (rows == 1) {
                 return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Service updated successfully"), HttpStatus.OK);

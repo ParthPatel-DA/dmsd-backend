@@ -21,11 +21,11 @@ public class Appointment {
     private String vehicleType;
 
     private String CustomerName;
-
+    private String ServiceName;
 
     public Appointment() {}
 
-    public Appointment(int appointmentId, int customerId, int vehicleId, int locationId, String technicianSsn, LocalDate appointmentDate, String status, Double total_charge, int serviceId, String creditCard, String paymentMethod, String locationName, String vehicleType, String customerName) {
+    public Appointment(int appointmentId, int customerId, int vehicleId, int locationId, String technicianSsn, LocalDate appointmentDate, String status, Double total_charge, int serviceId, String creditCard, String paymentMethod, String locationName, String vehicleType, String customerName, String serviceName) {
         this.appointmentId = appointmentId;
         this.customerId = customerId;
         this.vehicleId = vehicleId;
@@ -39,11 +39,20 @@ public class Appointment {
         this.paymentMethod = paymentMethod;
         this.locationName = locationName;
         this.vehicleType = vehicleType;
-        this.CustomerName = customerName;
+        CustomerName = customerName;
+        ServiceName = serviceName;
     }
 
     // getters and setters
 
+
+    public String getServiceName() {
+        return ServiceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        ServiceName = serviceName;
+    }
 
     public String getCustomerName() {
         return CustomerName;
