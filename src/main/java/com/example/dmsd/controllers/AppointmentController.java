@@ -1,11 +1,7 @@
 package com.example.dmsd.controllers;
 
-import com.example.dmsd.mapper.AppointmentsRowMapper;
-import com.example.dmsd.mapper.ServicesRowMapper;
-import com.example.dmsd.mapper.VehicleRowMapper;
-import com.example.dmsd.model.Appointment;
-import com.example.dmsd.model.CommonResponse;
-import com.example.dmsd.model.Vehicle;
+import com.example.dmsd.mapper.*;
+import com.example.dmsd.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -21,6 +17,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -179,7 +176,7 @@ public class AppointmentController {
     @GetMapping("/all")
     public ResponseEntity<CommonResponse> getAllAppointments() {
         try {
-            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method \n" +
+            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method, i.invoice_date \n" +
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
@@ -188,6 +185,30 @@ public class AppointmentController {
                     "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
                     "JOIN INVOICES i ON asi.invoice_id = i.invoice_id JOIN SERVICES s ON asi.service_id = s.service_id ;";
             List<Appointment> appointments = jdbcTemplate.query(sql, new AppointmentsRowMapper());
+
+            appointments.forEach(appointment -> {
+                String sql1 = "SELECT s.* FROM APPOINTMENTS a " +
+                        "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
+                        "JOIN SERVICES s ON asi.service_id = s.service_id " +
+                        "WHERE a.appointment_id = ?";
+
+                Services foundService = jdbcTemplate.queryForObject(sql1, new Object[]{appointment.getAppointmentId()}, new ServicesRowMapper());
+
+                String sql2 = "SELECT p.* FROM APPOINTMENTS a \n" +
+                        "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id \n" +
+                        "JOIN SERVICES s ON asi.service_id = s.service_id \n" +
+                        "JOIN SERVICES_PARTS sp ON sp.service_id = s.service_id \n" +
+                        "JOIN PARTS p ON p.part_id = sp.part_id \n" +
+                        "WHERE a.appointment_id = ?";
+
+                List<Part> parts = jdbcTemplate.query(sql2, new Object[]{appointment.getAppointmentId()}, new PartsRowMapper());
+
+                foundService.setPartList(parts);
+
+                appointment.setServices(foundService);
+
+            });
+
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched."), HttpStatus.OK);
 
         } catch (Exception e) {
@@ -200,7 +221,7 @@ public class AppointmentController {
     @GetMapping("/loc/{locationId}")
     public ResponseEntity<CommonResponse> getAppointmentsByLocationId(@PathVariable("locationId") int locationId) {
         try {
-            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method \n" +
+            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype, ' ', v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method, i.invoice_date \n" +
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
@@ -211,6 +232,30 @@ public class AppointmentController {
            // String sql = "SELECT a.*, v.vtype, l.lname FROM APPOINTMENTS a JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id JOIN INVOICES i ON asi.invoice_id = i.invoice_id JOIN VEHICLE v ON a.vechid = v.vehicle_id JOIN LOCATIONS l ON a.locid = l.location_id WHERE a.locid = ?";
 
             List<Appointment> appointments = jdbcTemplate.query(sql, new Object[]{locationId}, new AppointmentsRowMapper());
+
+            appointments.forEach(appointment -> {
+                String sql1 = "SELECT s.* FROM APPOINTMENTS a " +
+                        "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
+                        "JOIN SERVICES s ON asi.service_id = s.service_id " +
+                        "WHERE a.appointment_id = ?";
+
+                Services foundService = jdbcTemplate.queryForObject(sql1, new Object[]{appointment.getAppointmentId()}, new ServicesRowMapper());
+
+                String sql2 = "SELECT p.* FROM APPOINTMENTS a \n" +
+                        "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id \n" +
+                        "JOIN SERVICES s ON asi.service_id = s.service_id \n" +
+                        "JOIN SERVICES_PARTS sp ON sp.service_id = s.service_id \n" +
+                        "JOIN PARTS p ON p.part_id = sp.part_id \n" +
+                        "WHERE a.appointment_id = ?";
+
+                List<Part> parts = jdbcTemplate.query(sql2, new Object[]{appointment.getAppointmentId()}, new PartsRowMapper());
+
+                foundService.setPartList(parts);
+
+                appointment.setServices(foundService);
+
+            });
+
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched by location ID."), HttpStatus.OK);
 
         } catch (Exception e) {
@@ -223,7 +268,7 @@ public class AppointmentController {
     @GetMapping("/cust/{customerId}")
     public ResponseEntity<CommonResponse> getAppointmentsByCustomerId(@PathVariable("customerId") int customerId) {
         try {
-            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype,' ',v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method \n" +
+            String sql = "SELECT a.*, l.lname, CONCAT(v.vtype,' ',v.manufacture,' ',v.vmodel) AS vtype, p.firstname AS cname, i.total_charge, s.sname, i.Payment_method, i.invoice_date \n" +
                     "FROM APPOINTMENTS a " +
                     "JOIN LOCATIONS l ON a.locid = l.location_id " +
                     "JOIN VEHICLE v ON a.vechid = v.vehicle_id " +
@@ -233,6 +278,30 @@ public class AppointmentController {
                     "JOIN INVOICES i ON asi.invoice_id = i.invoice_id JOIN SERVICES s ON asi.service_id = s.service_id WHERE a.custid=?;";
           //  String sql = "SELECT * FROM APPOINTMENTS natural join APPOINTMENTS_SERVICES_INVOICES natural join INVOICES WHERE custid = ?";
             List<Appointment> appointments = jdbcTemplate.query(sql, new Object[]{customerId}, new AppointmentsRowMapper());
+
+            appointments.forEach(appointment -> {
+                String sql1 = "SELECT s.* FROM APPOINTMENTS a " +
+                        "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id " +
+                        "JOIN SERVICES s ON asi.service_id = s.service_id " +
+                        "WHERE a.appointment_id = ?";
+
+                Services foundService = jdbcTemplate.queryForObject(sql1, new Object[]{appointment.getAppointmentId()}, new ServicesRowMapper());
+
+                String sql2 = "SELECT p.* FROM APPOINTMENTS a \n" +
+                        "JOIN APPOINTMENTS_SERVICES_INVOICES asi ON a.appointment_id = asi.appointment_id \n" +
+                        "JOIN SERVICES s ON asi.service_id = s.service_id \n" +
+                        "JOIN SERVICES_PARTS sp ON sp.service_id = s.service_id \n" +
+                        "JOIN PARTS p ON p.part_id = sp.part_id \n" +
+                        "WHERE a.appointment_id = ?";
+
+                List<Part> parts = jdbcTemplate.query(sql2, new Object[]{appointment.getAppointmentId()}, new PartsRowMapper());
+
+                foundService.setPartList(parts);
+
+                appointment.setServices(foundService);
+
+            });
+
             return new ResponseEntity<>(new CommonResponse(appointments, HttpStatus.OK.value(), "All Appointments Fetched by Customer ID."), HttpStatus.OK);
 
         } catch (Exception e) {
@@ -245,8 +314,8 @@ public class AppointmentController {
     public ResponseEntity<CommonResponse> updateInvoicePaymentMethod(@PathVariable("appointmentId") int appointmentId, @RequestBody Appointment appointment) {
         try {
             // Update the payment_method in the Invoices table
-            String updateInvoiceQuery = "UPDATE INVOICES SET Payment_method = ? WHERE invoice_id = (SELECT invoice_id FROM APPOINTMENTS_SERVICES_INVOICES WHERE appointment_id = ?)";
-            jdbcTemplate.update(updateInvoiceQuery,appointment.getPaymentMethod(), appointmentId);
+            String updateInvoiceQuery = "UPDATE INVOICES SET Payment_method = ?, invoice_date = ? WHERE invoice_id = (SELECT invoice_id FROM APPOINTMENTS_SERVICES_INVOICES WHERE appointment_id = ?)";
+            jdbcTemplate.update(updateInvoiceQuery,appointment.getPaymentMethod(), LocalDate.now(), appointmentId);
 
             // Update the credit_card attribute in the Customers table
             if (!appointment.getCreditCard().isEmpty()){
@@ -254,8 +323,8 @@ public class AppointmentController {
                 jdbcTemplate.update(updateCustomerQuery, appointment.getCreditCard(), appointmentId);
             }
 
-              String updateStatusQuery = "UPDATE Appointments SET status = 'DONE' WHERE appointment_id = ?";
-              jdbcTemplate.update(updateStatusQuery, appointmentId);
+            String updateStatusQuery = "UPDATE Appointments SET status = 'DONE' WHERE appointment_id = ?";
+            jdbcTemplate.update(updateStatusQuery, appointmentId);
 
             return new ResponseEntity<>(new CommonResponse(null, HttpStatus.OK.value(), "Payment Method and Credit card updated."), HttpStatus.OK);
         } catch (Exception e) {

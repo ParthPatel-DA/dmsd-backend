@@ -24,6 +24,7 @@ public class AppointmentsRowMapper implements RowMapper<Appointment> {
         appointment.setCustomerName(rs.getString("cname"));
         appointment.setServiceName(rs.getString("sname"));
         appointment.setPaymentMethod(rs.getString("Payment_method"));
+        appointment.setInvoiceDate(rs.getDate("invoice_date").toLocalDate());
 //        appointment.setServiceId(rs.getInt("service_id"));
         return appointment;
     }

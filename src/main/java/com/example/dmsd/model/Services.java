@@ -16,9 +16,11 @@ public class Services {
 
     private List<Integer> partIds;
 
+    private List<Part> partList;
+
     public Services() {}
 
-    public Services(int serviceId, int skillId, String serviceName, int laborPrice, int addCharge, String partsName, List<Integer> partIds) {
+    public Services(int serviceId, int skillId, String serviceName, int laborPrice, int addCharge, String partsName, List<Integer> partIds, List<Part> partList) {
         this.serviceId = serviceId;
         this.skillId = skillId;
         this.serviceName = serviceName;
@@ -26,6 +28,15 @@ public class Services {
         this.addCharge = addCharge;
         this.partsName = partsName;
         this.partIds = partIds;
+        this.partList = partList;
+    }
+
+    public List<Part> getPartList() {
+        return partList;
+    }
+
+    public void setPartList(List<Part> partList) {
+        this.partList = partList;
     }
 
     public String getPartsName() {
